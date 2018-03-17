@@ -9,13 +9,15 @@
 
 ## Example
 ```go
-	fileLocationProviders := []FileLocationProvider{
+    import "github.com/Oppodelldog/filediscovery"
+
+	fileLocationProviders := []filediscovery.FileLocationProvider{
 		WorkingDirProvider(),
 		ExecutableDirProvider(),
 		EnvVarFilePathProvider(envVarName),
 	}
 
-	discovery := New(fileLocationProviders)
+	discovery := filediscovery.New(fileLocationProviders)
 
 	filePath, err := discovery.Discover("file_to_discover.yml")
 
