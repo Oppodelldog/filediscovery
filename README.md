@@ -3,6 +3,8 @@
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/Oppodelldog/filediscovery/master/LICENSE)
 [![Linux build](http://nulldog.de:12080/api/badges/Oppodelldog/filediscovery/status.svg)](http://nulldog.de:12080/Oppodelldog/filediscovery)
 [![Windows build](https://ci.appveyor.com/api/projects/status/qpe2889fbk1bw7lf/branch/master?svg=true)](https://ci.appveyor.com/project/Oppodelldog/filediscovery/branch/master)
+[![godoc](https://img.shields.io/badge/godoc-reference-5272B4.svg)](https://godoc.org/github.com/Oppodelldog/filediscovery)
+
 
 # Filediscovery
 > this module helps to find a file in various file locations
