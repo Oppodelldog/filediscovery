@@ -5,6 +5,34 @@
 [![Windows build](https://ci.appveyor.com/api/projects/status/qpe2889fbk1bw7lf/branch/master?svg=true)](https://ci.appveyor.com/project/Oppodelldog/filediscovery/branch/master)
 
 # Filediscovery
-> helps to find config file in various file locations
+> this module helps to find config file in various file locations
 
+## Example
+```go
+	fileLocationProviders := []FileLocationProvider{
+		WorkingDirProvider(),
+		ExecutableDirProvider(),
+		EnvVarFilePathProvider(envVarName),
+	}
 
+	discovery := New(fileLocationProviders)
+
+	filePath, err := discovery.Discover(testFileName)
+
+	// filePath - contains the first existing file in sequential order of given file providers
+	// err - nil if file was found. if no file was found it displays helpful error information
+```
+
+## Advanced
+If you'd like to implement a custom file Provider, you just need to
+implement the ```FileLoactionProvider``` function type.
+Here's a sample demonstration:
+```go
+    // type FileLocationProvider func(fileName string) (string, error)
+
+    func myLocationProvider(filename string)(string, error){
+        somePath := myCustomLookupStrategy()
+        return somePath,nil
+    }
+
+```
