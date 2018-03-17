@@ -10,6 +10,10 @@ import (
 type (
 	// FileDiscovery defines logic to discover a file.
 	FileDiscovery interface {
+
+		// Discover tries to find the given fileName in all FileLocationProviders. The providers are checked in given sequence.
+		// the first matching result will be returned. If the file could not be found and error is returned as if any other
+		// error occurs.
 		Discover(fileName string) (string, error)
 	}
 
