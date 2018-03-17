@@ -13,7 +13,7 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	assert.Implements(t, new(FileDiscovery), New([]FileLocationProvider{}))
+	assert.Implements(t, new(FileDiscoverer), New([]FileLocationProvider{}))
 }
 
 func TestFileDiscovery_Discover_callsFileLocationProviders(t *testing.T) {
@@ -130,13 +130,14 @@ func ExampleFileDiscovery_Discover() {
 
 	// for this demonstration we create a test file in /tmp
 	testFilePath := "/tmp/test-file.yml";
-	ioutil.WriteFile(testFilePath,[]byte("test"),0666)
+	ioutil.WriteFile(testFilePath, []byte("test"), 0666)
 
-	// Discovery needs at least one FileLocationProvider which provides a file location to search for
-	// in this case the FileLocation provided will be the /tmp folder.
+	// Discovery needs at least one FileLocationProvider which provides a file location to search for.
+	// There are already some providers available, but let's create a new one, for the sake of completion.
+	// In this case the FileLocation provided will be the /tmp folder.
 	tempDirLocationProvider := func(fileName string) (string, error) {
 		someFileLocation := "/tmp"
-		suggestedFilePath := path.Join(someFileLocation,fileName)
+		suggestedFilePath := path.Join(someFileLocation, fileName)
 		return suggestedFilePath, nil
 	}
 

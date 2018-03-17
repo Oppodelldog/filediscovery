@@ -8,8 +8,8 @@ import (
 )
 
 type (
-	// FileDiscovery defines logic to discover a file.
-	FileDiscovery interface {
+	// FileDiscoverer defines logic to discover a file.
+	FileDiscoverer interface {
 
 		// Discover tries to find the given fileName in all FileLocationProviders. The providers are checked in given sequence.
 		// the first matching result will be returned. If the file could not be found and error is returned as if any other
@@ -17,18 +17,18 @@ type (
 		Discover(fileName string) (string, error)
 	}
 
-	fileDiscovery struct {
+	FileDiscovery struct {
 		fileLocationProviders []FileLocationProvider
 	}
 
-	// FileLocationProvider provides a possible file location to FileDiscovery
+	// FileLocationProvider provides a possible file location to FileDiscoverer
 	FileLocationProvider func(fileName string) (string, error)
 )
 
-// New creates a new FileDiscovery and takes a list of FileLocationProviders which specify possible location a given file
+// New creates a new FileDiscoverer and takes a list of FileLocationProviders which specify possible location a given file
 // will be searched in.
-func New(fileLocationProviders []FileLocationProvider) FileDiscovery {
-	return &fileDiscovery{
+func New(fileLocationProviders []FileLocationProvider) FileDiscoverer {
+	return &FileDiscovery{
 		fileLocationProviders: fileLocationProviders,
 	}
 }
@@ -36,7 +36,7 @@ func New(fileLocationProviders []FileLocationProvider) FileDiscovery {
 // Discover tries to find the given fileName in all FileLocationProviders. The providers are checked in given sequence.
 // the first matching result will be returned. If the file could not be found and error is returned as if any other
 // error occurs.
-func (fd *fileDiscovery) Discover(fileName string) (string, error) {
+func (fd *FileDiscovery) Discover(fileName string) (string, error) {
 
 	var possibleConfigFilePaths []string
 
