@@ -4,8 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-
-	"github.com/pkg/errors"
+	"errors"
 )
 
 type (
@@ -52,7 +51,10 @@ func (fd *fileDiscovery) Discover(fileName string) (string, error) {
 	for _, configFilePath := range possibleConfigFilePaths {
 		if _, err := os.Stat(configFilePath); os.IsNotExist(err) {
 			errorString.WriteString(fmt.Sprintf("could not find config file at '%s'\n", configFilePath))
-		} else {
+			continue
+		}
+
+		if info, err := os.Stat(configFilePath); err == nil && !info.IsDir() {
 			return configFilePath, nil
 		}
 	}

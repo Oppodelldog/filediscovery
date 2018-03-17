@@ -6,8 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"errors"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestWorkingDirProvider(t *testing.T) {

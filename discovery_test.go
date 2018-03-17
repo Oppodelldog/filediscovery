@@ -82,7 +82,7 @@ func TestFileDiscovery_DiscoverMultipleProviders_ifFileNotFoundReturnsMultipleEr
 	mock := &fileLocationProviderMock{}
 	provider := mock.GetFunc("", nil)
 
-	providers := []FileLocationProvider{provider,provider}
+	providers := []FileLocationProvider{provider, provider}
 
 	discovery := New(providers)
 	testFilename := "test-file"
