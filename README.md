@@ -5,7 +5,7 @@
 [![Windows build](https://ci.appveyor.com/api/projects/status/qpe2889fbk1bw7lf/branch/master?svg=true)](https://ci.appveyor.com/project/Oppodelldog/filediscovery/branch/master)
 
 # Filediscovery
-> this module helps to find config file in various file locations
+> this module helps to find a file in various file locations
 
 ## Example
 ```go
@@ -17,7 +17,7 @@
 
 	discovery := New(fileLocationProviders)
 
-	filePath, err := discovery.Discover(testFileName)
+	filePath, err := discovery.Discover("file_to_discover.yml")
 
 	// filePath - contains the first existing file in sequential order of given file providers
 	// err - nil if file was found. if no file was found it displays helpful error information
