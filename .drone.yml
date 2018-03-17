@@ -1,0 +1,17 @@
+workspace:
+  base: /go
+  path: src/github.com/Oppodelldog/filediscovery
+
+pipeline:
+  build:
+    image: golang:1.9.4
+    commands:
+      - go get ./...
+      - go get github.com/mattn/goveralls
+      - goveralls -service drone.io -repotoken oTDITtEKMYs32fahITROxsCIU6z6LHXiy
+      - go build
+
+matrix:
+ GO_VERSION:
+   - latest
+   - "1.9"
