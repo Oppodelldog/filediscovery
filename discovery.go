@@ -2,9 +2,9 @@ package filediscovery
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
-	"errors"
 )
 
 type (

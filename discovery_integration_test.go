@@ -1,13 +1,14 @@
 package filediscovery
 
 import (
-	"testing"
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"os"
 	"path"
-	"io/ioutil"
 	"path/filepath"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const testFileName = "test_config.yml"
@@ -71,7 +72,7 @@ func TestIntegrationOfDiscoveryWithProviders(t *testing.T) {
 			no:          4,
 			description: "File created under envVar filepath, expect filepath and no error",
 			prepareFunc: func() error {
-				os.MkdirAll(envVarTestFolder, 0777);
+				os.MkdirAll(envVarTestFolder, 0777)
 				os.Setenv(envVarName, envVarTestFilePath)
 				return ioutil.WriteFile(envVarTestFilePath, []byte("envVarFilePath"), 0777)
 			},

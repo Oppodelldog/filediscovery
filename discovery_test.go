@@ -1,13 +1,12 @@
 package filediscovery
 
 import (
+	"bytes"
+	"errors"
 	"os"
 	"path"
 	"testing"
 
-	"bytes"
-
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
 
