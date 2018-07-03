@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"os/user"
 )
 
 var workingDirProviderFunc = os.Getwd
@@ -50,5 +51,26 @@ func EnvVarFilePathProvider(envVar string) FileLocationProvider {
 		}
 
 		return "", fmt.Errorf("env var '%s' not defined", envVar)
+	}
+}
+
+
+var homeFolderLookupFunc = user.Current
+
+// HomeConfigDirProvider provides the working directory as a possible file location
+func HomeConfigDirProvider(subFolders ...string) FileLocationProvider {
+
+	return func(fileName string) (string, error) {
+		usr, err := homeFolderLookupFunc()
+		if err != nil {
+			return "", err
+		}
+
+		subfoldersPath := ""
+		for _, subfolder := range subFolders {
+			subfoldersPath = path.Join(subfoldersPath, subfolder)
+		}
+
+		return path.Join(usr.HomeDir, subfoldersPath, fileName), nil
 	}
 }

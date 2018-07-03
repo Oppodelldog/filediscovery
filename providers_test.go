@@ -9,6 +9,7 @@ import (
 	"errors"
 
 	"github.com/stretchr/testify/assert"
+	"os/user"
 )
 
 func TestWorkingDirProvider(t *testing.T) {
@@ -101,4 +102,37 @@ func TestEnvVarFilePathProvider_error(t *testing.T) {
 	_, err := provider(testFileName)
 	assert.Error(t, err)
 
+}
+
+func TestHomeConfigDirProvider(t *testing.T) {
+	testFileName := "testfile"
+
+	subfolder1 := ".config"
+	subfolder2 := "some-project"
+	provider := HomeConfigDirProvider(subfolder1, subfolder2)
+	result, err := provider(testFileName)
+	if err != nil {
+		t.Fatalf("Did not expect provider to return an error, but got: %v", err)
+	}
+
+	usr, err := user.Current()
+	if err != nil {
+		t.Fatalf("Did not expect user.Current to return an error, but got: %v", err)
+	}
+
+	expectedFilepath := path.Join(usr.HomeDir, subfolder1, subfolder2, testFileName)
+	assert.Equal(t, expectedFilepath, result)
+}
+
+func TestHomeConfigDirProvider_UserLookupReturnsError(t *testing.T) {
+
+	errorStub := errors.New("error-stub")
+	homeFolderLookupFunc = func() (*user.User, error) {
+		return nil, errorStub
+	}
+
+	provider := HomeConfigDirProvider()
+	_, err := provider(testFileName)
+
+	assert.Exactly(t, errorStub, err)
 }

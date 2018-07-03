@@ -17,6 +17,7 @@
 		WorkingDirProvider(),
 		ExecutableDirProvider(),
 		EnvVarFilePathProvider(envVarName),
+		HomeConfigDirProvider(".config","myapp"),
 	}
 
 	discovery := filediscovery.New(fileLocationProviders)
