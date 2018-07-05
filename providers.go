@@ -3,15 +3,15 @@ package filediscovery
 import (
 	"fmt"
 	"os"
+	"os/user"
 	"path"
 	"path/filepath"
-	"os/user"
 )
 
 var workingDirProviderFunc = os.Getwd
 
 // WorkingDirProvider provides the working directory as a possible file location
-func WorkingDirProvider() FileLocationProvider {
+func WorkingDirProvider(subFolders ...string) FileLocationProvider {
 
 	return func(fileName string) (string, error) {
 		dir, err := workingDirProviderFunc()
@@ -19,14 +19,16 @@ func WorkingDirProvider() FileLocationProvider {
 			return "", err
 		}
 
-		return path.Join(dir, fileName), nil
+		subFoldersPath := createPath(subFolders...)
+
+		return path.Join(dir, subFoldersPath, fileName), nil
 	}
 }
 
 var executableDirProviderFunc = os.Executable
 
 // ExecutableDirProvider provides the executables directory as a possible file location
-func ExecutableDirProvider() FileLocationProvider {
+func ExecutableDirProvider(subFolders ...string) FileLocationProvider {
 
 	return func(fileName string) (string, error) {
 		dir, err := executableDirProviderFunc()
@@ -34,7 +36,10 @@ func ExecutableDirProvider() FileLocationProvider {
 			return "", err
 		}
 
-		return path.Join(filepath.Dir(dir), fileName), nil
+		executableDir := filepath.Dir(dir)
+		subFoldersPath := createPath(subFolders...)
+
+		return path.Join(executableDir, subFoldersPath, fileName), nil
 	}
 }
 
@@ -54,7 +59,6 @@ func EnvVarFilePathProvider(envVar string) FileLocationProvider {
 	}
 }
 
-
 var homeFolderLookupFunc = user.Current
 
 // HomeConfigDirProvider provides the working directory as a possible file location
@@ -66,11 +70,17 @@ func HomeConfigDirProvider(subFolders ...string) FileLocationProvider {
 			return "", err
 		}
 
-		subfoldersPath := ""
-		for _, subfolder := range subFolders {
-			subfoldersPath = path.Join(subfoldersPath, subfolder)
-		}
+		subFoldersPath := createPath(subFolders...)
 
-		return path.Join(usr.HomeDir, subfoldersPath, fileName), nil
+		return path.Join(usr.HomeDir, subFoldersPath, fileName), nil
 	}
+}
+
+func createPath(subFolders ...string) string {
+	subFoldersPath := ""
+	for _, subfolder := range subFolders {
+		subFoldersPath = path.Join(subFoldersPath, subfolder)
+	}
+
+	return subFoldersPath
 }

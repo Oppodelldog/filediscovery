@@ -7,9 +7,10 @@ import (
 	"path"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"fmt"
 	"io/ioutil"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
@@ -129,7 +130,7 @@ func TestFileDiscovery_Discover_ifFileWasFoundReturnsFilePath(t *testing.T) {
 func ExampleFileDiscovery_Discover() {
 
 	// for this demonstration we create a test file in /tmp
-	testFilePath := "/tmp/test-file.yml";
+	testFilePath := "/tmp/test-file.yml"
 	ioutil.WriteFile(testFilePath, []byte("test"), 0666)
 
 	// Discovery needs at least one FileLocationProvider which provides a file location to search for.
