@@ -5,7 +5,7 @@ setup: ## Install all the build and lint dependencies
 	go get -u golang.org/x/tools/cmd/goimports
 
 ci-goveralls:
-	go get github.com/mattn/goveralls
+	GO111MODULE=off go get github.com/mattn/goveralls
 	goveralls -service drone.io -repotoken oTDITtEKMYs32fahITROxsCIU6z6LHXiy
 	
 test-with-coverage: ## Run all the tests
