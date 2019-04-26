@@ -9,8 +9,6 @@ import (
 
 	"os/user"
 	"path/filepath"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestWorkingDirProvider(t *testing.T) {
@@ -49,7 +47,9 @@ func TestWorkingDirProvider(t *testing.T) {
 				t.Fatalf("Did not expect provider to return an error, but got: %v", err)
 			}
 
-			assert.Equal(t, testData.ExpectedPath, result)
+			if testData.ExpectedPath != result {
+				t.Fatalf("expected provider to return '%s', but got: '%s'", testData.ExpectedPath, result)
+			}
 		})
 	}
 }
@@ -65,7 +65,9 @@ func TestWorkingDirProvider_error(t *testing.T) {
 	provider := WorkingDirProvider()
 	_, err := provider(testFileName)
 
-	assert.Equal(t, errorStub, err)
+	if errorStub != err {
+		t.Fatalf("did expect provider to return stubbed error %v, but got %v", errorStub, err)
+	}
 }
 
 func TestExecutableDirProvider(t *testing.T) {
@@ -103,7 +105,9 @@ func TestExecutableDirProvider(t *testing.T) {
 				t.Fatalf("Did not expect provider to return an error, but got: %v", err)
 			}
 
-			assert.Equal(t, testData.ExpectedPath, result)
+			if testData.ExpectedPath != result {
+				t.Fatalf("expected provider to return '%s', but got: '%s'", testData.ExpectedPath, result)
+			}
 		})
 	}
 }
@@ -119,13 +123,18 @@ func TestExecutableDirProvider_error(t *testing.T) {
 	provider := ExecutableDirProvider()
 	_, err := provider(testFileName)
 
-	assert.Equal(t, errorStub, err)
+	if errorStub != err {
+		t.Fatalf("did expect provider to return stubbed error %v, but got %v", errorStub, err)
+	}
 }
 
 func TestEnvVarFilePathProvider(t *testing.T) {
 	testVarName := "TEST-VAR"
 	testVarValue := "TEST-VALUE"
-	os.Setenv(testVarName, testVarValue)
+	err := os.Setenv(testVarName, testVarValue)
+	if err != nil {
+		t.Fatalf("setting env var %s failed with error: %v", envVarName, err)
+	}
 
 	provider := EnvVarFilePathProvider(testVarName)
 
@@ -135,9 +144,14 @@ func TestEnvVarFilePathProvider(t *testing.T) {
 		t.Fatalf("Did not expect provider to return an error, but got: %v", err)
 	}
 
-	assert.Equal(t, testVarValue, result)
+	if testVarValue != result {
+		t.Fatalf("expected provider to return value '%s' from env var, but got: '%s'", testVarValue, result)
+	}
 
-	os.Unsetenv(testVarName)
+	err = os.Unsetenv(testVarName)
+	if err != nil {
+		t.Fatalf("unsetting env var %s failed with error: %v", envVarName, err)
+	}
 }
 
 func TestEnvVarFilePathProvider_error(t *testing.T) {
@@ -147,7 +161,9 @@ func TestEnvVarFilePathProvider_error(t *testing.T) {
 
 	testFileName := "" // not necessary for this test, since filename comes from env var
 	_, err := provider(testFileName)
-	assert.Error(t, err)
+	if err == nil {
+		t.Fatalf("expect provider to return and error but got nil")
+	}
 }
 
 func TestHomeConfigDirProvider(t *testing.T) {
@@ -184,7 +200,9 @@ func TestHomeConfigDirProvider(t *testing.T) {
 				t.Fatalf("Did not expect provider to return an error, but got: %v", err)
 			}
 
-			assert.Equal(t, testData.ExpectedPath, result)
+			if testData.ExpectedPath != result {
+				t.Fatalf("expected provider to return path '%s', but got: '%s'", testData.ExpectedPath, result)
+			}
 		})
 	}
 }
@@ -199,5 +217,7 @@ func TestHomeConfigDirProvider_UserLookupReturnsError(t *testing.T) {
 	provider := HomeConfigDirProvider()
 	_, err := provider(testFileName)
 
-	assert.Exactly(t, errorStub, err)
+	if errorStub != err {
+		t.Fatalf("expected provider to return %v, but got %v", errorStub, err)
+	}
 }

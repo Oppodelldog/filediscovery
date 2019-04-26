@@ -7,8 +7,6 @@ import (
 	"path"
 	"path/filepath"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 const testFileName = "test_config.yml"
@@ -72,12 +70,21 @@ func TestIntegrationOfDiscoveryWithProviders(t *testing.T) {
 			no:          4,
 			description: "File created under envVar filepath, expect filepath and no error",
 			prepareFunc: func() error {
-				os.MkdirAll(envVarTestFolder, 0777)
-				os.Setenv(envVarName, envVarTestFilePath)
+				err := os.MkdirAll(envVarTestFolder, 0777)
+				if err != nil {
+					t.Fatalf("mkdir failed with an error: %v", err)
+				}
+				err = os.Setenv(envVarName, envVarTestFilePath)
+				if err != nil {
+					t.Fatalf("setting env var %s failed with an error: %v", envVarName, err)
+				}
 				return ioutil.WriteFile(envVarTestFilePath, []byte("envVarFilePath"), 0777)
 			},
 			cleanupFunc: func() error {
-				os.Unsetenv(envVarName)
+				err := os.Unsetenv(envVarName)
+				if err != nil {
+					t.Fatalf("unsetting env var %s failed with an error: %v", envVarName, err)
+				}
 				return os.RemoveAll(envVarTestFolder)
 			},
 			expectedString: envVarTestFilePath,
@@ -95,11 +102,17 @@ func TestIntegrationOfDiscoveryWithProviders(t *testing.T) {
 			discovery := New(providersUnderTest)
 			result, err := discovery.Discover(testFileName)
 
-			assert.Equal(t, testCase.expectedString, result)
+			if testCase.expectedString != result {
+				t.Fatalf("expecxted provider to return '%s', but got '%s'", testCase.expectedString, result)
+			}
 			if testCase.expectError {
-				assert.Error(t, err)
+				if err == nil {
+					t.Fatalf("expecxted provider to return an error, but got nil")
+				}
 			} else {
-				assert.NoError(t, err)
+				if err != nil {
+					t.Fatalf("expecxted provider to return no error, but got %v", err)
+				}
 			}
 
 			err = testCase.cleanupFunc()

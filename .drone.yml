@@ -4,16 +4,11 @@ workspace:
 
 pipeline:
   build:
-    image: golang:1.9.4
+    image: golang:1.12.4
     commands:
-      - go get -u github.com/golang/dep/cmd/dep
-      - dep ensure
-      - go get ./...
-      - go get github.com/mattn/goveralls
-      - goveralls -service drone.io -repotoken oTDITtEKMYs32fahITROxsCIU6z6LHXiy
-      - go build
+      - make drone-ci
 
 matrix:
  GO_VERSION:
    - latest
-   - "1.9"
+   - "1.12.4"

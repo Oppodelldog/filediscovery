@@ -5,16 +5,20 @@ import (
 	"errors"
 	"os"
 	"path"
+	"reflect"
+	"strings"
 	"testing"
 
 	"fmt"
 	"io/ioutil"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
-	assert.Implements(t, new(FileDiscoverer), New([]FileLocationProvider{}))
+	interfaceType := reflect.TypeOf(new(FileDiscoverer)).Elem()
+	object := New([]FileLocationProvider{})
+	if !reflect.TypeOf(object).Implements(interfaceType) {
+		t.Fatalf("%T must implement %v", object, interfaceType)
+	}
 }
 
 func TestFileDiscovery_Discover_callsFileLocationProviders(t *testing.T) {
@@ -28,10 +32,14 @@ func TestFileDiscovery_Discover_callsFileLocationProviders(t *testing.T) {
 	}
 
 	discovery := New(providers)
-	discovery.Discover("")
+	_, _ = discovery.Discover("")
 
-	assert.True(t, mock1.WasCalled())
-	assert.True(t, mock2.WasCalled())
+	if !mock1.WasCalled() {
+		t.Fatalf("expected mock1 to be called, but it was not")
+	}
+	if !mock2.WasCalled() {
+		t.Fatalf("expected mock2 to be called, but it was not")
+	}
 }
 
 func TestFileDiscovery_Discover_callsFileLocationProvidersWithFilename(t *testing.T) {
@@ -41,9 +49,11 @@ func TestFileDiscovery_Discover_callsFileLocationProvidersWithFilename(t *testin
 
 	discovery := New(providers)
 	testFilename := "test-file"
-	discovery.Discover(testFilename)
+	_, _ = discovery.Discover(testFilename)
 
-	assert.Equal(t, testFilename, mock.GetCalledFilenameParameter())
+	if testFilename != mock.GetCalledFilenameParameter() {
+		t.Fatalf("expected %s would have been passed to LocationProviderMock, but it got: %s", testFilename, mock.GetCalledFilenameParameter())
+	}
 }
 
 func TestFileDiscovery_Discover_providerErrorsAreAppendedToError(t *testing.T) {
@@ -59,7 +69,12 @@ func TestFileDiscovery_Discover_providerErrorsAreAppendedToError(t *testing.T) {
 	testFilename := "test-file"
 	_, err := discovery.Discover(testFilename)
 
-	assert.Contains(t, err.Error(), errorMessage)
+	if err == nil {
+		t.Fatalf("expected error to be not nil, but it was")
+	}
+	if !strings.Contains(err.Error(), errorMessage) {
+		t.Fatalf("expected error %s to contain %s", err.Error(), errorMessage)
+	}
 }
 
 func TestFileDiscovery_Discover_ifFileNotFoundReturnsError(t *testing.T) {
@@ -76,7 +91,12 @@ func TestFileDiscovery_Discover_ifFileNotFoundReturnsError(t *testing.T) {
 	expectedError := bytes.NewBufferString("could not find config file at ''")
 	expectedError.WriteString("\n")
 
-	assert.Equal(t, expectedError.String(), err.Error())
+	if err == nil {
+		t.Fatalf("expected error to be not nil, but it was")
+	}
+	if !strings.Contains(expectedError.String(), err.Error()) {
+		t.Fatalf("expected error %s to contain %s", expectedError.String(), err.Error())
+	}
 }
 
 func TestFileDiscovery_DiscoverMultipleProviders_ifFileNotFoundReturnsMultipleErrorLines(t *testing.T) {
@@ -93,7 +113,12 @@ func TestFileDiscovery_DiscoverMultipleProviders_ifFileNotFoundReturnsMultipleEr
 	expectedError := bytes.NewBufferString("could not find config file at ''\ncould not find config file at ''")
 	expectedError.WriteString("\n")
 
-	assert.Equal(t, expectedError.String(), err.Error())
+	if err == nil {
+		t.Fatalf("expected error to be not nil, but it was")
+	}
+	if !strings.Contains(expectedError.String(), err.Error()) {
+		t.Fatalf("expected error %s to contain %s", expectedError.String(), err.Error())
+	}
 }
 
 func TestFileDiscovery_Discover_ifFileWasFoundReturnsFilePath(t *testing.T) {
@@ -104,7 +129,10 @@ func TestFileDiscovery_Discover_ifFileWasFoundReturnsFilePath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("did not expect os.Create to return an error, but got: %v", err)
 	}
-	f.Close()
+	err = f.Close()
+	if err != nil {
+		t.Fatalf("did not expect f.Close to return an error, but got: %v", err)
+	}
 
 	tempDirProvider := func(fileName string) (string, error) {
 		return path.Join(os.TempDir(), testFilename), nil
@@ -119,7 +147,9 @@ func TestFileDiscovery_Discover_ifFileWasFoundReturnsFilePath(t *testing.T) {
 		t.Fatalf("did not expect discovery.Discover to return an error, but got: %v", err)
 	}
 
-	assert.Equal(t, testFilePath, result)
+	if testFilePath != result {
+		t.Fatalf("expected '%s' to match '%s'", testFilePath, result)
+	}
 
 	err = os.Remove(testFilePath)
 	if err != nil {
@@ -131,7 +161,10 @@ func ExampleFileDiscovery_Discover() {
 
 	// for this demonstration we create a test file in /tmp
 	testFilePath := "/tmp/test-file.yml"
-	ioutil.WriteFile(testFilePath, []byte("test"), 0666)
+	err := ioutil.WriteFile(testFilePath, []byte("test"), 0666)
+	if err != nil {
+		panic("error writing test file")
+	}
 
 	// Discovery needs at least one FileLocationProvider which provides a file location to search for.
 	// There are already some providers available, but let's create a new one, for the sake of completion.
@@ -156,5 +189,8 @@ func ExampleFileDiscovery_Discover() {
 	fmt.Println(fileFoundAtPath)
 	// Output: /tmp/test-file.yml
 
-	os.Remove(testFilePath)
+	err = os.Remove(testFilePath)
+	if err != nil {
+		panic("error removing test file")
+	}
 }

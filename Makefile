@@ -1,17 +1,21 @@
-SOURCE_FILES?=$$(go list ./... | grep -v /vendor/)
-TEST_PATTERN?=.
-TEST_OPTIONS?=-race -covermode=atomic -coverprofile=coverage.txt
+export GO111MODULE=on
 
 setup: ## Install all the build and lint dependencies
-	go get -u gopkg.in/alecthomas/gometalinter.v2
-	go get -u golang.org/x/tools/cmd/cover
+	wget -O- https://git.io/vp6lP | sh 
 	go get -u golang.org/x/tools/cmd/goimports
-	go get -u github.com/golang/dep/cmd/dep
-	dep ensure
-	gometalinter --install --update
+
+ci-goveralls:
+	go get github.com/mattn/goveralls
+	goveralls -service drone.io -repotoken oTDITtEKMYs32fahITROxsCIU6z6LHXiy
+	
+test-with-coverage: ## Run all the tests
+	rm -f coverage.tmp && rm -f coverage.txt
+	echo 'mode: atomic' > coverage.txt && go list ./... | xargs -n1 -I{} sh -c 'go test -race -covermode=atomic -coverprofile=coverage.tmp {} && tail -n +2 coverage.tmp >> coverage.txt' && rm coverage.tmp
 
 test: ## Run all the tests
-	gotestcover $(TEST_OPTIONS)  $(SOURCE_FILES) -run $(TEST_PATTERN) -timeout=1m
+	go version
+	go env
+	go list ./... | xargs -n1 -I{} sh -c 'go test -race {}'
 
 cover: test ## Run all the tests and opens the coverage report
 	go tool cover -html=coverage.txt
@@ -22,20 +26,32 @@ fmt: ## gofmt and goimports all go files
 lint: ## Run all the linters
 	gometalinter --vendor --disable-all \
 		--enable=deadcode \
+		--enable=gocyclo \
 		--enable=ineffassign \
 		--enable=gosimple \
 		--enable=staticcheck \
 		--enable=gofmt \
+		--enable=golint \
 		--enable=goimports \
 		--enable=dupl \
 		--enable=misspell \
 		--enable=errcheck \
 		--enable=vet \
 		--enable=vetshadow \
+		--enable=varcheck \
+		--enable=structcheck \
+		--enable=interfacer \
+		--enable=goconst \
 		--deadline=10m \
-		./...
+		./... | grep -v "mocks"
 
-ci: lint test ## Run all the tests and code checks
+
+ci: test-with-coverage build ## Run all the tests and code checks
+
+drone-ci: ci ci-goveralls ## drone.io build
+      
+build: test ## build 
+	go build
 
 # Self-Documented Makefile see https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
