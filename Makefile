@@ -1,5 +1,3 @@
-export GO111MODULE=on
-
 setup: ## Install all the build and lint dependencies
 	wget -O- https://git.io/vp6lP | sh 
 	go get -u golang.org/x/tools/cmd/goimports
