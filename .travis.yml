@@ -1,0 +1,12 @@
+language: go
+
+go:
+  - 1.13.x
+
+os:
+  - linux
+    
+go_import_path: github.com/Oppodelldog/filediscovery
+
+script:
+  - make test-with-coverage 
