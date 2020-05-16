@@ -2,6 +2,8 @@ setup: ## Install all the build and lint dependencies
 	go get -u golang.org/x/tools/cmd/goimports
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.27.0
 	mkdir .bin || mv bin/golangci-lint .bin/golangci-lint && rm -rf bin
+	pwd
+	ls .bin
 
 ci-goveralls:
 	GO111MODULE=off go get github.com/mattn/goveralls
