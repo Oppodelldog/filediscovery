@@ -1,6 +1,7 @@
 setup: ## Install all the build and lint dependencies
-	wget -O- https://git.io/vp6lP | sh 
 	go get -u golang.org/x/tools/cmd/goimports
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.27.0
+	mkdir .bin || mv bin/golangci-lint .bin/golangci-lint && rm -rf bin
 
 ci-goveralls:
 	GO111MODULE=off go get github.com/mattn/goveralls
@@ -21,30 +22,10 @@ cover: test ## Run all the tests and opens the coverage report
 fmt: ## gofmt and goimports all go files
 	find . -name '*.go' -not -wholename './vendor/*' | while read -r file; do gofmt -w -s "$$file"; goimports -w "$$file"; done
 
-lint: ## Run all the linters
-	gometalinter --vendor --disable-all \
-		--enable=deadcode \
-		--enable=gocyclo \
-		--enable=ineffassign \
-		--enable=gosimple \
-		--enable=staticcheck \
-		--enable=gofmt \
-		--enable=golint \
-		--enable=goimports \
-		--enable=dupl \
-		--enable=misspell \
-		--enable=errcheck \
-		--enable=vet \
-		--enable=vetshadow \
-		--enable=varcheck \
-		--enable=structcheck \
-		--enable=interfacer \
-		--enable=goconst \
-		--deadline=10m \
-		./... | grep -v "mocks"
+lint: ## Run the linters
+	.bin/golangci-lint run
 
-
-ci: test-with-coverage build ## Run all the tests and code checks
+ci: setup test-with-coverage lint ## Run all the tests and code checks
 
 drone-ci: ci ci-goveralls ## drone.io build
       

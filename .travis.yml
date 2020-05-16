@@ -9,4 +9,4 @@ os:
 go_import_path: github.com/Oppodelldog/filediscovery
 
 script:
-  - make test-with-coverage 
+  - make ci

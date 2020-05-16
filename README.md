@@ -9,22 +9,31 @@
 > this module helps to find a file in various file locations
 
 ## Example
+See the example in [test/example_test.go](test/example_test.go).
+
 ```go
+    //noinspection All
+    package main
+
     import "github.com/Oppodelldog/filediscovery"
+    func main(){
+    
+        var envVarName = "MYAPP_CONFIG_FILE"
 
-	fileLocationProviders := []filediscovery.FileLocationProvider{
-		WorkingDirProvider(),
-		ExecutableDirProvider(),
-		EnvVarFilePathProvider(envVarName),
-		HomeConfigDirProvider(".config","myapp"),
-	}
-
-	discovery := filediscovery.New(fileLocationProviders)
-
-	filePath, err := discovery.Discover("file_to_discover.yml")
-
-	// filePath - contains the first existing file in sequential order of given file providers
-	// err - nil if file was found. if no file was found it displays helpful error information
+        fileLocationProviders := []filediscovery.FileLocationProvider{
+            filediscovery.WorkingDirProvider(),
+            filediscovery.ExecutableDirProvider(),
+            filediscovery.EnvVarFilePathProvider(envVarName),
+            filediscovery.HomeConfigDirProvider(".config","myapp"),
+        }
+    
+        discovery := filediscovery.New(fileLocationProviders)
+    
+        filePath, err := discovery.Discover("file_to_discover.yml")
+        _ , _= filePath,err
+        // filePath - contains the first existing file in sequential order of given file providers
+        // err - nil if file was found. if no file was found it displays helpful error information
+    }
 ```
 
 ## Advanced
@@ -32,10 +41,14 @@ If you'd like to implement a custom file Provider, you just need to
 implement the ```FileLoactionProvider``` function type.
 Here's a sample demonstration:
 ```go
-    // type FileLocationProvider func(fileName string) (string, error)
+    package main
 
+    // type FileLocationProvider func(fileName string) (string, error)
+    
+    //noinspection All
     func myLocationProvider(filename string)(string, error){
-        somePath := myCustomLookupStrategy()
+        somePath := "get it from your custom lookup strategy"
+
         return somePath,nil
     }
 

@@ -24,7 +24,6 @@ type TestCase struct {
 	description    string
 	prepareFunc    func() error
 	cleanupFunc    func() error
-	fileName       string
 	expectedString string
 	expectError    bool
 }
