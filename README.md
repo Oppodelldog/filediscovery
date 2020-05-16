@@ -15,7 +15,7 @@ See the example in [test/example_test.go](test/example_test.go).
     //noinspection All
     package main
 
-    import "github.com/Oppodelldog/filediscovery"
+    import "github.com/Oppodelldog/filediscovery/filediscovery"
     func main(){
     
         var envVarName = "MYAPP_CONFIG_FILE"

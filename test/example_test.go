@@ -2,7 +2,7 @@ package test
 
 import (
 	"fmt"
-	"github.com/Oppodelldog/filediscovery"
+	"github.com/Oppodelldog/filediscovery/filediscovery"
 	"io/ioutil"
 	"os"
 	"path"

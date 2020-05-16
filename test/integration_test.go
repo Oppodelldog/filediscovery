@@ -1,7 +1,8 @@
-package filediscovery
+package test
 
 import (
 	"fmt"
+	"github.com/Oppodelldog/filediscovery/filediscovery"
 	"io/ioutil"
 	"os"
 	"path"
@@ -13,10 +14,10 @@ const testFileName = "test_config.yml"
 
 const envVarName = "TEST_FILE_PATH"
 
-var providersUnderTest = []FileLocationProvider{
-	WorkingDirProvider(),
-	ExecutableDirProvider(),
-	EnvVarFilePathProvider(envVarName),
+var providersUnderTest = []filediscovery.FileLocationProvider{
+	filediscovery.WorkingDirProvider(),
+	filediscovery.ExecutableDirProvider(),
+	filediscovery.EnvVarFilePathProvider(envVarName),
 }
 
 type TestCase struct {
@@ -98,7 +99,7 @@ func TestIntegrationOfDiscoveryWithProviders(t *testing.T) {
 				t.Fatalf("prepare func returned error: %v", err)
 			}
 
-			discovery := New(providersUnderTest)
+			discovery := filediscovery.New(providersUnderTest)
 			result, err := discovery.Discover(testFileName)
 
 			if testCase.expectedString != result {
