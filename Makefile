@@ -3,6 +3,7 @@ setup: ## Install all the build and lint dependencies
 	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s v1.27.0
 	mkdir .bin || mv bin/golangci-lint .bin/golangci-lint && rm -rf bin
 	pwd
+	ls -alh
 	ls .bin
 
 ci-goveralls:
