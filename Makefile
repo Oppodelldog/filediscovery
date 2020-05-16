@@ -28,7 +28,7 @@ fmt: ## gofmt and goimports all go files
 lint: ## Run the linters
 	.bin/golangci-lint run
 
-ci: setup test-with-coverage lint ## Run all the tests and code checks
+ci: setup test-with-coverage ## Run all the tests and code checks
 
 drone-ci: ci ci-goveralls ## drone.io build
       
