@@ -129,6 +129,7 @@ func TestExecutableDirProvider_error(t *testing.T) {
 }
 
 func TestEnvVarFilePathProvider(t *testing.T) {
+	const envVarName = "TEST_FILE_PATH"
 	testVarName := "TEST-VAR"
 	testVarValue := "TEST-VALUE"
 	err := os.Setenv(testVarName, testVarValue)
@@ -208,6 +209,7 @@ func TestHomeConfigDirProvider(t *testing.T) {
 }
 
 func TestHomeConfigDirProvider_UserLookupReturnsError(t *testing.T) {
+	const testFileName = "test_config.yml"
 
 	errorStub := errors.New("error-stub")
 	homeFolderLookupFunc = func() (*user.User, error) {
