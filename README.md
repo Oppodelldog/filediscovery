@@ -2,7 +2,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/Oppodelldog/filediscovery/badge.svg)](https://coveralls.io/github/Oppodelldog/filediscovery)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://raw.githubusercontent.com/Oppodelldog/filediscovery/master/LICENSE)
 [![Build Status](https://travis-ci.com/Oppodelldog/filediscovery.svg?branch=master)](https://travis-ci.com/Oppodelldog/filediscovery)
-[![godoc](https://img.shields.io/badge/godoc-reference-5272B4.svg)](https://godoc.org/github.com/Oppodelldog/filediscovery)
+[![pkg.go.dev](https://img.shields.io/badge/pkg.go.dev-reference-%23007d9c.svg)](https://pkg.go.dev/github.com/Oppodelldog/filediscovery)
 
 
 # Filediscovery
